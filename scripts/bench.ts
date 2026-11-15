@@ -164,7 +164,7 @@ const md = [
   "",
   `Target: core startup < 4,000 tokens. Result: **${fmt(prof("core").tokens.o200k)}** (o200k), ${prof("core").tokens.o200k < 4000 ? "met" : "NOT met"}.`,
   "",
-  "`typed` adds one tool per operation in the default typed areas; `full` adds one for each of the 252 operations, so it is the eager-loading reference.",
+  `\`typed\` adds one tool per operation in the default typed areas; \`full\` adds one for each of the ${prof("full").tools - prof("core").tools} operations, so it is the eager-loading reference.`,
   "",
   "## Representative workflows (core profile, real Aseprite)",
   "",

@@ -4,7 +4,7 @@ An **unofficial**, open-source [Model Context Protocol](https://modelcontextprot
 
 > Not affiliated with or endorsed by Igara Studio. Aseprite is not included. You need your own licensed copy (v1.3 or newer).
 
-- **252 operations, 11 tools.** The operations live in a searchable catalog: drawing, selections, layers, palettes, animation, tilemaps, cleanup, validation, sprite sheets and engine exports. The model finds them with `search_ops`, reads their schemas with `describe_ops` and runs them with `run_op` or `batch`. Startup context is **1,684 tokens**, 84% less than v1 ([benchmarks](docs/benchmarks.md)).
+- **257 operations, 11 tools.** The operations live in a searchable catalog: drawing, selections, layers, palettes, animation, tilemaps, cleanup, validation, sprite sheets and engine exports. The model finds them with `search_ops`, reads their schemas with `describe_ops` and runs them with `run_op` or `batch`. Startup context is **1,750 tokens**, 83% less than v1 ([benchmarks](docs/benchmarks.md)).
 - **Real `.aseprite` files.** Aseprite itself reads and writes every file, so layers, tags, durations, palettes, slices and tilemaps survive.
 - **Atomic, versioned edits.** One `batch` applies a whole list of operations. Either all of them succeed or the file stays byte-identical. Every document has a version (a sha256 prefix of its bytes). Pass it back as `expectVersion` and stale edits are rejected. Every commit is checkpointed, and `restore` does undo, redo and restore.
 - **Draw the way models think.** `draw.pixel_map` takes a character grid plus a color legend. `pixels.read` returns the same format, so a model can read, modify and write back exactly.
@@ -95,7 +95,7 @@ The default **core** profile registers 11 tools. Every operation is reached thro
 
 `run_lua` is added only when `ASEPRITE_MCP_ALLOW_LUA=1`.
 
-- [docs/operations.md](docs/operations.md) lists all 252 operations by area, with their arguments and test level. [docs/catalog.json](docs/catalog.json) is the machine-readable version.
+- [docs/operations.md](docs/operations.md) lists all 257 operations by area, with their arguments and test level. [docs/catalog.json](docs/catalog.json) is the machine-readable version.
 - [docs/tools.md](docs/tools.md) is the generated tool reference.
 - The `aseprite://workflow` and `aseprite://guide` resources and the `animated-sprite` prompt give the model a step-by-step workflow and pixel-art rules.
 
@@ -105,13 +105,13 @@ Conventions: pixel coordinates start at the top-left `(0,0)`. Frames are **1-bas
 
 | `ASEPRITE_MCP_PROFILE` | Tools | Startup tokens* | Use it when |
 |---|---|---|---|
-| `core` (default) | 11 | 1,684 | Normal use. Operations are discovered on demand |
-| `legacy` | 13 | 2,309 | Existing v1 prompts and scripts (`aseprite_create`, `aseprite_edit`, ... with the v1 arguments) |
-| `core,legacy` | 24 | 3,878 | Migrating from v1 |
-| `typed` | 94 | 21,890 | Clients that work better with one tool per operation. `ASEPRITE_MCP_TYPED` picks the areas (default `drawing,layers,animation,preview`) |
-| `full` | 263 | 55,455 | Every operation as its own tool. Large; mainly for comparison |
+| `core` (default) | 11 | 1,750 | Normal use. Operations are discovered on demand |
+| `legacy` | 13 | 2,375 | Existing v1 prompts and scripts (`aseprite_create`, `aseprite_edit`, ... with the v1 arguments) |
+| `core,legacy` | 24 | 3,944 | Migrating from v1 |
+| `typed` | 95 | 22,410 | Clients that work better with one tool per operation. `ASEPRITE_MCP_TYPED` picks the areas (default `drawing,layers,animation,preview`) |
+| `full` | 268 | 56,779 | Every operation as its own tool. Large; mainly for comparison |
 
-\* o200k_base tokens for the tool definitions plus server instructions, from [docs/benchmarks.md](docs/benchmarks.md). Over the five benchmark workflows, `core` uses 60% fewer tokens in total than `full`, discovery included.
+\* o200k_base tokens for the tool definitions plus server instructions, from [docs/benchmarks.md](docs/benchmarks.md). Over the five benchmark workflows, `core` uses 61% fewer tokens in total than `full`, discovery included.
 
 ### Example: one call, one atomic edit
 
@@ -207,7 +207,7 @@ npx tsx examples/build-samples.ts                                          # reb
 ASEPRITE_MCP_TEST_LIVE=1 npx vitest run tests/integration/live.test.ts     # launches the Aseprite GUI
 ```
 
-Read [docs/architecture.md](docs/architecture.md) for how it fits together, [docs/compatibility.md](docs/compatibility.md) for what has been verified per engine, and [CHANGELOG.md](CHANGELOG.md) for what changed in 2.0.
+Read [docs/architecture.md](docs/architecture.md) for how it fits together, [docs/compatibility.md](docs/compatibility.md) for what has been verified per engine, and [CHANGELOG.md](CHANGELOG.md) for what changed in each release.
 
 ## Limitations
 

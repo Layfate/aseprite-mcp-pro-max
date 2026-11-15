@@ -47,7 +47,7 @@ See [architecture.md](architecture.md) for the module breakdown.
 
 ## 3. Tool surface
 
-**2.0 (default `core` profile):** `capabilities`, `search_ops`, `describe_ops`, `run_op`, `batch`, `inspect`, `preview`, `changes`, `checkpoint`, `restore`, `jobs`, plus the conditional `run_lua`. The 252 operations are listed in [operations.md](operations.md).
+**2.0 (default `core` profile):** `capabilities`, `search_ops`, `describe_ops`, `run_op`, `batch`, `inspect`, `preview`, `changes`, `checkpoint`, `restore`, `jobs`, plus the conditional `run_lua`. The 257 operations (2.1) are listed in [operations.md](operations.md).
 
 **1.0 (kept as the `legacy` profile):** `status`, `create`, `inspect`, `edit` (44 ops), `read_pixels`, `preview`, `compare`, `validate`, `export`, `import_image`, `palette`, `history`, `live`, plus the conditional `generate_sprite` and `run_lua`. The generated reference for both is [tools.md](tools.md).
 

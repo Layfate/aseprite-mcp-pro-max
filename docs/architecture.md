@@ -7,7 +7,7 @@ MCP client ──stdio──► src/index.ts ─► src/server.ts (McpServer, in
                  src/tools/core.ts · typed.ts · legacy.ts   (11 core tools; typed = one tool per op)
                                          │
                                          ▼
-                 src/catalog/registry.ts ── 252 OpDefs (id, area, kind, strict zod schema, example)
+                 src/catalog/registry.ts ── 257 OpDefs (id, area, kind, strict zod schema, example)
                                          │   search · describe · validate · prepare hooks
                                          ▼
                  src/runtime/executor.ts ── edit → transaction · query/render → version cache

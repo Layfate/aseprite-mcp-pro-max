@@ -10,16 +10,16 @@ This is what a client puts in the model's context at the start of every session,
 
 | Profile | Tools | Bytes | Tokens | vs v1 | Server start + tools/list |
 |---|---|---|---|---|---|
-| v1 baseline | 13 | 40,049 | 10,213 / 9,975 | — | 344 ms |
-| **core** (default) | 11 | 6,756 | 1,684 / 1,641 | 84% less | 365 ms |
-| legacy | 13 | 8,998 | 2,309 / 2,257 | 77% less | 354 ms |
-| core,legacy | 24 | 15,298 | 3,878 / 3,782 | 62% less | 351 ms |
-| typed | 94 | 81,532 | 21,890 / 21,244 | 114% more | 376 ms |
-| full | 263 | 208,242 | 55,455 / 53,818 | 443% more | 410 ms |
+| v1 baseline | 13 | 40,049 | 10,213 / 9,975 | — | 363 ms |
+| **core** (default) | 11 | 7,045 | 1,750 / 1,707 | 83% less | 392 ms |
+| legacy | 13 | 9,287 | 2,375 / 2,323 | 77% less | 391 ms |
+| core,legacy | 24 | 15,587 | 3,944 / 3,848 | 61% less | 407 ms |
+| typed | 95 | 83,426 | 22,410 / 21,751 | 119% more | 407 ms |
+| full | 268 | 213,064 | 56,779 / 55,108 | 456% more | 435 ms |
 
-Target: core startup < 4,000 tokens. Result: **1,684** (o200k), met.
+Target: core startup < 4,000 tokens. Result: **1,750** (o200k), met.
 
-`typed` adds one tool per operation in the default typed areas; `full` adds one for each of the 252 operations, so it is the eager-loading reference.
+`typed` adds one tool per operation in the default typed areas; `full` adds one for each of the 257 operations, so it is the eager-loading reference.
 
 ## Representative workflows (core profile, real Aseprite)
 
@@ -28,22 +28,22 @@ These are the five workflows from `examples/workflows.ts`. Tokens are the reques
 | Workflow | Calls | Tokens | Images | Image bytes | Aseprite spawns | Errors/retries | Wall time |
 |---|---|---|---|---|---|---|---|
 | 1. reference → sprite | 8 | 1,235 / 1,229 | 0 | 0 | 9 | 0 | 1.3 s |
-| 2. animated character | 9 | 2,262 / 2,229 | 0 | 0 | 9 | 0 | 1.2 s |
+| 2. animated character | 9 | 2,262 / 2,229 | 0 | 0 | 9 | 0 | 1.3 s |
 | 3. seamless tileset | 6 | 1,223 / 1,204 | 0 | 0 | 6 | 0 | 0.8 s |
 | 4. modify + restore | 7 | 1,329 / 1,312 | 0 | 0 | 18 | 0 | 2.2 s |
-| 5. engine exports (11 targets) | 13 | 3,049 / 3,023 | 0 | 0 | 43 | 0 | 5.8 s |
-| **all** | 43 | 9,098 / 8,997 | 0 | 0 | 85 | 0 | 11.4 s |
+| 5. engine exports (11 targets) | 13 | 3,049 / 3,023 | 0 | 0 | 43 | 0 | 5.3 s |
+| **all** | 43 | 9,098 / 8,997 | 0 | 0 | 85 | 0 | 10.9 s |
 
-Discovery for a model that knows none of the 49 op ids used: 16 `search_ops` calls (one per id prefix) and 5 `describe_ops` calls, 14,900 / 14,626 tokens. This is the worst case; a model that already knows the ids from earlier turns or the guide skips it.
+Discovery for a model that knows none of the 49 op ids used: 16 `search_ops` calls (one per id prefix) and 5 `describe_ops` calls, 14,912 / 14,639 tokens. This is the worst case; a model that already knows the ids from earlier turns or the guide skips it.
 
 ## Session total: lazy (core) vs eager (full)
 
 | | Startup | Discovery | Workflow calls | **Total** |
 |---|---|---|---|---|
-| core (lazy) | 1,684 / 1,641 | 14,900 / 14,626 | 9,098 / 8,997 | **25,682 / 25,264** |
-| full (eager) | 55,455 / 53,818 | 0 | 9,098 / 8,997 | **64,553 / 62,815** |
+| core (lazy) | 1,750 / 1,707 | 14,912 / 14,639 | 9,098 / 8,997 | **25,760 / 25,343** |
+| full (eager) | 56,779 / 55,108 | 0 | 9,098 / 8,997 | **65,877 / 64,105** |
 
-The core profile uses **60% fewer tokens** than eager loading over the whole session (target ≥ 50%: met). The workflow-call cost is assumed to be the same for both profiles: a typed tool call carries the same arguments without the `run_op` wrapper, a difference of a few tokens per call.
+The core profile uses **61% fewer tokens** than eager loading over the whole session (target ≥ 50%: met). The workflow-call cost is assumed to be the same for both profiles: a typed tool call carries the same arguments without the `run_op` wrapper, a difference of a few tokens per call.
 
 ## Cache: cold vs warm reads
 
@@ -52,12 +52,12 @@ Reads are cached by document version (sha256), so repeating a read on an unchang
 | Read | Cold | Warm |
 |---|---|---|
 | inspect | 120 ms | 1 ms |
-| preview (frames) | 137 ms | 1 ms |
-| query check.lint | 120 ms | 2 ms |
+| preview (frames) | 138 ms | 1 ms |
+| query check.lint | 137 ms | 2 ms |
 
 ## Process
 
-- Server RSS: 84 MB after connect, 76 MB after 73 calls.
+- Server RSS: 75 MB after connect, 74 MB after 73 calls.
 - Aseprite processes started: 92 in total. Cache: 3 hits, 17 misses.
 - Failed calls (each would be a model retry): 0.
 

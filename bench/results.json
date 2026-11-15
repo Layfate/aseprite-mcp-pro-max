@@ -1,5 +1,5 @@
 {
- "date": "2026-11-15T08:00:57.384Z",
+ "date": "2026-11-15T08:54:18.348Z",
  "node": "v24.21.0",
  "note": "o200k_base/cl100k_base are proxies for Claude's tokenizer.",
  "startup": [
@@ -11,64 +11,64 @@
     "o200k": 10213,
     "cl100k": 9975
    },
-   "startMs": 343.70230000000015
+   "startMs": 363.1077
   },
   {
    "name": "core",
    "tools": 11,
-   "bytes": 6756,
+   "bytes": 7045,
    "tokens": {
-    "o200k": 1684,
-    "cl100k": 1641
+    "o200k": 1750,
+    "cl100k": 1707
    },
-   "startMs": 364.6441
+   "startMs": 392.0964999999999
   },
   {
    "name": "legacy",
    "tools": 13,
-   "bytes": 8998,
+   "bytes": 9287,
    "tokens": {
-    "o200k": 2309,
-    "cl100k": 2257
+    "o200k": 2375,
+    "cl100k": 2323
    },
-   "startMs": 354.3588000000002
+   "startMs": 390.6796999999999
   },
   {
    "name": "core,legacy",
    "tools": 24,
-   "bytes": 15298,
+   "bytes": 15587,
    "tokens": {
-    "o200k": 3878,
-    "cl100k": 3782
+    "o200k": 3944,
+    "cl100k": 3848
    },
-   "startMs": 350.89829999999984
+   "startMs": 407.1428999999998
   },
   {
    "name": "typed",
-   "tools": 94,
-   "bytes": 81532,
+   "tools": 95,
+   "bytes": 83426,
    "tokens": {
-    "o200k": 21890,
-    "cl100k": 21244
+    "o200k": 22410,
+    "cl100k": 21751
    },
-   "startMs": 375.55020000000013
+   "startMs": 406.6084999999998
   },
   {
    "name": "full",
-   "tools": 263,
-   "bytes": 208242,
+   "tools": 268,
+   "bytes": 213064,
    "tokens": {
-    "o200k": 55455,
-    "cl100k": 53818
+    "o200k": 56779,
+    "cl100k": 55108
    },
-   "startMs": 409.9291999999996
+   "startMs": 435.24130000000014
   }
  ],
  "workflows": [
   {
    "name": "1. reference → sprite",
    "calls": 8,
-   "ms": 1300.2911999999997,
+   "ms": 1336.7824,
    "tokens": {
     "o200k": 1235,
     "cl100k": 1229
@@ -81,7 +81,7 @@
   {
    "name": "2. animated character",
    "calls": 9,
-   "ms": 1248.6075,
+   "ms": 1253.755,
    "tokens": {
     "o200k": 2262,
     "cl100k": 2229
@@ -94,7 +94,7 @@
   {
    "name": "3. seamless tileset",
    "calls": 6,
-   "ms": 828.6826000000001,
+   "ms": 833.9076999999997,
    "tokens": {
     "o200k": 1223,
     "cl100k": 1204
@@ -107,7 +107,7 @@
   {
    "name": "4. modify + restore",
    "calls": 7,
-   "ms": 2181.1162000000004,
+   "ms": 2226.2698,
    "tokens": {
     "o200k": 1329,
     "cl100k": 1312
@@ -120,7 +120,7 @@
   {
    "name": "5. engine exports (11 targets)",
    "calls": 13,
-   "ms": 5809.039699999999,
+   "ms": 5266.0669,
    "tokens": {
     "o200k": 3049,
     "cl100k": 3023
@@ -136,40 +136,40 @@
   "areas": 16,
   "ops": 49,
   "tokens": {
-   "o200k": 14900,
-   "cl100k": 14626
+   "o200k": 14912,
+   "cl100k": 14639
   }
  },
  "latency": [
   {
    "what": "inspect",
-   "coldMs": 119.77269999999953,
-   "warmMs": 1.3446999999996478
+   "coldMs": 120.21700000000055,
+   "warmMs": 1.4963999999999942
   },
   {
    "what": "preview (frames)",
-   "coldMs": 137.26280000000042,
-   "warmMs": 1.1695999999992637
+   "coldMs": 138.1815000000006,
+   "warmMs": 1.1774999999997817
   },
   {
    "what": "query check.lint",
-   "coldMs": 120.09330000000045,
-   "warmMs": 1.86620000000039
+   "coldMs": 137.176300000001,
+   "warmMs": 1.8867000000009284
   }
  ],
  "totals": {
   "core": {
-   "o200k": 25682,
-   "cl100k": 25264
+   "o200k": 25760,
+   "cl100k": 25343
   },
   "full": {
-   "o200k": 64553,
-   "cl100k": 62815
+   "o200k": 65877,
+   "cl100k": 64105
   }
  },
  "process": {
-  "rssStartMB": 84,
-  "rssEndMB": 76,
+  "rssStartMB": 75,
+  "rssEndMB": 74,
   "spawns": 92,
   "cache": {
    "hits": 3,
