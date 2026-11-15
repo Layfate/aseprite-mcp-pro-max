@@ -110,6 +110,19 @@ export const TILE_CHECK_OPS: OpDef[] = [
   op("check.brief", "validation", Q, "Objective checks against the stored asset brief", {},
     { args: {}, setup: [{ op: "brief.set", brief: { width: 32, height: 32, maxColors: 16, transparency: "binary", states: [{ name: "idle", frames: 2 }] } }] }),
 
+  op("check.craft", "validation", Q, "Craft audit for AI-art tells: pillow shading, flat ramps, light, banding, confetti, jaggies, outline, values",
+    {
+      layer, ...frameSel, maxFrames: int().min(1).max(256).optional(),
+      light: z.enum(["top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right", "front"]).optional(),
+      maxColors: int().min(1).max(256).optional(), outline: Color.optional(), allowSemiTransparency: z.boolean().optional(), allowSymmetry: z.boolean().optional(),
+      ignore: z.array(z.enum(["C1", "C2", "C3", "C5", "C6", "C7", "E1", "E4", "F1", "G6", "S4", "V1", "X0", "X3"])).max(16).optional(),
+    },
+    { light: "top-left" },
+    {
+      keywords: ["quality", "ai art tells", "slop", "pillow shading", "banding", "hue shift", "review", "jaggies", "generated look"],
+      notes: "Ids match rules://92-generated-art-tells. verdict: blocking | needs-work | clean; score 0-100 is comparable between versions of one sprite. Reference and background layers are excluded. Light, colour budget and transparency default to the brief. Clean is necessary, not sufficient: still look (preview) and review.",
+    }),
+
   // ---------------------------------------------------------------- brief & review
   op("brief.set", "production", E, "Store asset constraints once: size, palette, outline, light, states, directions, engine",
     {

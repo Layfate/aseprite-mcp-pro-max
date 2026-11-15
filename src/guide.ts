@@ -1,5 +1,6 @@
 /** Sent to clients as server instructions on connect. Kept short: it costs tokens every session. */
-export const INSTRUCTIONS = `Aseprite MCP Pro Max (unofficial) edits real .aseprite files through Aseprite. 200+ operations live in a catalog: find them with search_ops, get schemas with describe_ops, run with run_op (one op) or batch (many edit ops, atomic). Every result carries the document version; pass it back as expectVersion to reject stale edits. Pixels from top-left (0,0); frames 1-based; colors "#rrggbb[aa]", "transparent" or palette index. Workflow: aseprite://workflow.`;
+export const INSTRUCTIONS = `Aseprite MCP Pro Max (unofficial) edits real .aseprite files through Aseprite. 200+ operations live in a catalog: find them with search_ops, get schemas with describe_ops, run with run_op (one op) or batch (many edit ops, atomic). Every result carries the document version; pass it back as expectVersion to reject stale edits. Pixels from top-left (0,0); frames 1-based; colors "#rrggbb[aa]", "transparent" or palette index. Workflow: aseprite://workflow.
+Making art: follow skill://studio (prompt "studio"): brief -> concept -> draw -> shade -> review; craft rules in rules://index (kb.rules, kb.template). Never call art done without a preview you looked at, check.craft with no blocking finding, and a review by a reader who did not draw it.`;
 
 export const WORKFLOW_GUIDE = `# Production workflow: brief -> construct -> inspect -> validate -> refine
 
@@ -14,11 +15,17 @@ export const WORKFLOW_GUIDE = `# Production workflow: brief -> construct -> insp
 3. **Inspect.** preview (tag + onion), view.contact_sheet, view.silhouette, view.values, view.tile_repeat,
    view.gif for playback. pixels.read returns exact pixels in pixel_map format for precise edits.
    Results are cached per document version; reading again after no change is free.
-4. **Validate (objective).** check.brief, check.lint, check.palette, check.clipping, check.timing,
-   check.jitter, check.pivot_drift, check.identity, check.outline, tile.check_seams, anim.loop_check.
-   These measure facts; they do not grade art.
-5. **Refine (subjective).** review.rubric lists what to judge by eye; record findings with review.note.
-   Fix, re-run checks, repeat. checkpoint/restore/changes keep every step reversible.
+4. **Validate (objective).** check.craft finds the tells of generated art (pillow shading, brightness-only
+   ramps, light against the brief, banding, confetti, jaggies, doubled outline, symmetry, murky values,
+   colour bloat; ids from rules://92-generated-art-tells). check.brief, check.lint, check.palette,
+   check.clipping, check.timing, check.jitter, check.pivot_drift, check.identity, check.outline,
+   tile.check_seams, anim.loop_check cover mechanics. These measure facts; they do not grade art.
+5. **Refine (subjective).** Cold read the preview before rereading the brief (skill://review); have a
+   reader who did not draw it judge (pixel-critic agent). Fix only the named findings, one round at a
+   time; keep a fix only if it wins a side-by-side comparison. checkpoint/restore/changes keep every
+   step reversible.
+
+Craft knowledge: rules://index (62 rules, 400 drawable templates via kb.template), skill://<name>.
 
 Exports: engine.* (search_ops "godot", "unity", ...) then engine.validate. Re-exports skip unchanged sources.
 Defaults are crisp: nearest-neighbour scaling, binary alpha, no smoothing unless you ask (doc.scale method,

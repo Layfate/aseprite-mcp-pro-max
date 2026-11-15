@@ -1302,7 +1302,7 @@ end
 ---------------------------------------------------------------------------
 
 local here = (debug.getinfo(1, "S").source or ""):gsub("^@", ""):match("^(.*)[/\\]") or "."
-M.MODULES = { "mod_base", "mod_select", "mod_draw", "mod_color", "mod_anim", "mod_tiles", "mod_clean", "mod_view" }
+M.MODULES = { "mod_base", "mod_select", "mod_draw", "mod_color", "mod_anim", "mod_tiles", "mod_clean", "mod_view", "mod_craft" }
 for _, name in ipairs(M.MODULES) do
   local path = here .. "/" .. name .. ".lua"
   local f = io.open(path, "r")
@@ -1345,6 +1345,6 @@ CMD.registry = function()
   return { ops = o, queries = q, views = v }
 end
 
-M.version = "2.0.0"
+M.version = "2.1.0"
 
 return M

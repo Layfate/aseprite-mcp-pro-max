@@ -64,6 +64,17 @@ env = { ASEPRITE_PATH = "/Applications/Aseprite.app/Contents/MacOS/aseprite" }
 
 Any other MCP client works the same way: run `node dist/index.js` over stdio. More examples are in [examples/](examples/).
 
+## Quality workflow (2.1)
+
+Pixel art made by a model usually looks generated for predictable reasons: guessed decisions, detail before form, shading by brightness slider, and "done" claimed from a tool result nobody looked at. 2.1 adds four things against that:
+
+- **`check.craft`** measures the tells of generated art: pillow shading, flat ramps, light that contradicts the brief, banding, confetti, jaggies, doubled outlines, mirror symmetry, murky values and colour bloat. Findings carry ids from `rules://92-generated-art-tells`, coordinates and a fix.
+- **A rulebook**: 62 craft rules with 400 drawable templates (`rules://index`, `kb.rules`, `kb.template`), vendored from [aseprite-ai-artist](https://github.com/with-pebbly/aseprite-ai-artist) under MIT.
+- **Workflow skills** (`skill://studio` is the front door): brief → concept → draw → shade → review, with a look after every stage.
+- **An independent critic** (`agents/pixel-critic.md`): a cold read before the brief, a scored critique, and blind A/B comparisons that decide whether a fix is kept.
+
+As a Claude Code plugin: `/plugin marketplace add <path or git url of this repo>`, then `/plugin install aseprite-pro-max`. The first start runs `npm install`, which also builds the server. Skills appear as `/aseprite-pro-max:studio` and so on. In other MCP clients, the skills are available as prompts and `skill://` resources.
+
 ## Tools
 
 The default **core** profile registers 11 tools. Every operation is reached through them.

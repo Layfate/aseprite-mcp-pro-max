@@ -3,6 +3,7 @@ import { McpToolError } from "../errors.js";
 import { getPreset } from "../palettes.js";
 import { ACTION_OPS, type Pattern } from "./actions.js";
 import { ENGINE_OPS } from "./actions-engines.js";
+import { KB_OPS } from "./actions-kb.js";
 import { coord, frameSel, int, layer, pos } from "./common.js";
 import { COLOR_ANIM_OPS } from "./ops-color.js";
 import { DRAW_OPS } from "./ops-draw.js";
@@ -75,7 +76,7 @@ const BEFORE: Record<string, NonNullable<OpDef["example"]["before"]>> = {
   "preset.apply": [{ op: "preset.save", args: { name: "outline_and_shadow", params: { outline: "#000000", layer: "body" }, ops: [{ op: "draw.outline", layer: "\${layer}", color: "\${outline}" }] } }],
 };
 
-export const CATALOG: OpDef[] = [...STRUCTURE_OPS, ...DRAW_OPS, ...PREPARED_OPS, ...COLOR_ANIM_OPS, ...TILE_CHECK_OPS, REF_COMPARE, ...ACTION_OPS, ...ENGINE_OPS]
+export const CATALOG: OpDef[] = [...STRUCTURE_OPS, ...DRAW_OPS, ...PREPARED_OPS, ...COLOR_ANIM_OPS, ...TILE_CHECK_OPS, REF_COMPARE, ...ACTION_OPS, ...KB_OPS, ...ENGINE_OPS]
   .map((d) => (PREPARE[d.id] && !d.prepare ? { ...d, prepare: PREPARE[d.id] } : d))
   .map((d) => (BEFORE[d.id] ? { ...d, example: { ...d.example, before: BEFORE[d.id] } } : d))
   .sort((a, b) => a.id.localeCompare(b.id));

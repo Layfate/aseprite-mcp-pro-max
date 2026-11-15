@@ -1,9 +1,9 @@
 {
  "generated": "scripts/gen-catalog.ts",
- "total": 252,
+ "total": 257,
  "testLevels": {
   "behavior": 123,
-  "smoke": 126,
+  "smoke": 131,
   "untested": 3
  },
  "ops": [
@@ -997,6 +997,7 @@
    "live": true,
    "slow": false,
    "tests": [
+    "craft",
     "smoke",
     "workflows"
    ],
@@ -1598,6 +1599,131 @@
    "live": true,
    "slow": false,
    "tests": [
+    "smoke"
+   ],
+   "tested": "smoke"
+  },
+  {
+   "id": "check.craft",
+   "area": "validation",
+   "kind": "query",
+   "summary": "Craft audit for AI-art tells: pillow shading, flat ramps, light, banding, confetti, jaggies, outline, values",
+   "doc": "required",
+   "schema": {
+    "type": "object",
+    "properties": {
+     "layer": {
+      "type": "string",
+      "maxLength": 512
+     },
+     "frame": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "frames": {
+      "maxItems": 4096,
+      "type": "array",
+      "items": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 65535
+      }
+     },
+     "fromFrame": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "toFrame": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "tag": {
+      "type": "string",
+      "maxLength": 256
+     },
+     "maxFrames": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+     },
+     "light": {
+      "type": "string",
+      "enum": [
+       "top-left",
+       "top",
+       "top-right",
+       "left",
+       "right",
+       "bottom-left",
+       "bottom",
+       "bottom-right",
+       "front"
+      ]
+     },
+     "maxColors": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+     },
+     "outline": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 32
+       },
+       {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 255
+       }
+      ]
+     },
+     "allowSemiTransparency": {
+      "type": "boolean"
+     },
+     "allowSymmetry": {
+      "type": "boolean"
+     },
+     "ignore": {
+      "maxItems": 16,
+      "type": "array",
+      "items": {
+       "type": "string",
+       "enum": [
+        "C1",
+        "C2",
+        "C3",
+        "C5",
+        "C6",
+        "C7",
+        "E1",
+        "E4",
+        "F1",
+        "G6",
+        "S4",
+        "V1",
+        "X0",
+        "X3"
+       ]
+      }
+     }
+    }
+   },
+   "example": {
+    "light": "top-left"
+   },
+   "requires": [
+    "aseprite"
+   ],
+   "status": "stable",
+   "live": true,
+   "slow": false,
+   "notes": "Ids match rules://92-generated-art-tells. verdict: blocking | needs-work | clean; score 0-100 is comparable between versions of one sprite. Reference and background layers are excluded. Light, colour budget and transparency default to the brief. Clean is necessary, not sufficient: still look (preview) and review.",
+   "tests": [
+    "craft",
     "smoke"
    ],
    "tested": "smoke"
@@ -2820,6 +2946,7 @@
    "slow": false,
    "tests": [
     "behavior",
+    "craft",
     "legacy",
     "smoke",
     "workflows"
@@ -5258,6 +5385,7 @@
    "slow": false,
    "tests": [
     "behavior",
+    "craft",
     "legacy",
     "smoke",
     "workflows"
@@ -5343,6 +5471,7 @@
    "slow": false,
    "tests": [
     "behavior",
+    "craft",
     "legacy",
     "smoke"
    ],
@@ -5717,6 +5846,7 @@
    "slow": false,
    "tests": [
     "behavior",
+    "craft",
     "legacy",
     "smoke"
    ],
@@ -6059,6 +6189,135 @@
    "live": true,
    "slow": false,
    "tests": [
+    "smoke"
+   ],
+   "tested": "smoke"
+  },
+  {
+   "id": "draw.shade",
+   "area": "drawing",
+   "kind": "edit",
+   "summary": "Shade or light one ramp step, hue-shifted (cool shadows, warm lights), palette colours only",
+   "doc": "required",
+   "schema": {
+    "type": "object",
+    "properties": {
+     "layer": {
+      "type": "string",
+      "maxLength": 512
+     },
+     "frame": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "frames": {
+      "maxItems": 4096,
+      "type": "array",
+      "items": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 65535
+      }
+     },
+     "fromFrame": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "toFrame": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "tag": {
+      "type": "string",
+      "maxLength": 256
+     },
+     "x": {
+      "type": "integer",
+      "minimum": -65535,
+      "maximum": 65535
+     },
+     "y": {
+      "type": "integer",
+      "minimum": -65535,
+      "maximum": 65535
+     },
+     "width": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "height": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+     },
+     "inSelection": {
+      "type": "boolean"
+     },
+     "steps": {
+      "type": "integer",
+      "minimum": -3,
+      "maximum": 3
+     },
+     "colors": {
+      "maxItems": 64,
+      "type": "array",
+      "items": {
+       "anyOf": [
+        {
+         "type": "string",
+         "maxLength": 32
+        },
+        {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 255
+        }
+       ]
+      }
+     },
+     "palette": {
+      "minItems": 2,
+      "maxItems": 256,
+      "type": "array",
+      "items": {
+       "anyOf": [
+        {
+         "type": "string",
+         "maxLength": 32
+        },
+        {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 255
+        }
+       ]
+      }
+     },
+     "stepL": {
+      "type": "integer",
+      "minimum": 4,
+      "maximum": 40
+     }
+    }
+   },
+   "example": {
+    "layer": "body",
+    "steps": -1,
+    "inSelection": true
+   },
+   "requires": [
+    "aseprite"
+   ],
+   "status": "stable",
+   "live": true,
+   "slow": false,
+   "notes": "steps < 0 darkens toward blue-violet, > 0 lightens toward warm yellow; only palette colours are used (none suitable -> pixel unchanged and listed). Limit with inSelection, x/y/width/height or colors.",
+   "tests": [
+    "craft",
     "smoke"
    ],
    "tested": "smoke"
@@ -7636,6 +7895,131 @@
    "live": true,
    "slow": false,
    "tests": [
+    "smoke"
+   ],
+   "tested": "smoke"
+  },
+  {
+   "id": "kb.rule",
+   "area": "production",
+   "kind": "action",
+   "summary": "Read one rulebook file (or one '## section' of it) or one workflow skill",
+   "doc": "none",
+   "schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+     },
+     "section": {
+      "type": "string",
+      "maxLength": 120
+     }
+    },
+    "required": [
+     "name"
+    ]
+   },
+   "example": {
+    "name": "02-shading-and-light",
+    "section": "Hue-shift"
+   },
+   "requires": [],
+   "status": "stable",
+   "live": false,
+   "slow": false,
+   "tests": [
+    "craft",
+    "smoke"
+   ],
+   "tested": "smoke"
+  },
+  {
+   "id": "kb.rules",
+   "area": "production",
+   "kind": "action",
+   "summary": "Pixel-art rulebook: list the 62 craft rules and skills, or search rules and templates",
+   "doc": "none",
+   "schema": {
+    "type": "object",
+    "properties": {
+     "query": {
+      "type": "string",
+      "maxLength": 200
+     }
+    }
+   },
+   "example": {
+    "query": "walk cycle"
+   },
+   "requires": [],
+   "status": "stable",
+   "live": false,
+   "slow": false,
+   "tests": [
+    "craft",
+    "smoke"
+   ],
+   "tested": "smoke"
+  },
+  {
+   "id": "kb.template",
+   "area": "production",
+   "kind": "action",
+   "summary": "A rulebook grid template as ready draw.pixel_map args (recolourable, placeable)",
+   "doc": "none",
+   "schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+     },
+     "x": {
+      "type": "integer",
+      "minimum": -65535,
+      "maximum": 65535
+     },
+     "y": {
+      "type": "integer",
+      "minimum": -65535,
+      "maximum": 65535
+     },
+     "layer": {
+      "type": "string",
+      "maxLength": 512
+     },
+     "colors": {
+      "type": "object",
+      "propertyNames": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 1
+      }
+     },
+     "erase": {
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "name"
+    ]
+   },
+   "example": {
+    "name": "tells-sphere-lit",
+    "x": 4,
+    "y": 4
+   },
+   "requires": [],
+   "status": "stable",
+   "live": false,
+   "slow": false,
+   "notes": "Transcribe, then adapt to the pose: a template is a starting point, not the answer. colors maps a template char to a sprite palette colour. erase:true maps '.' to transparent (otherwise '.' keeps existing pixels).",
+   "tests": [
+    "craft",
     "smoke"
    ],
    "tested": "smoke"
@@ -9988,6 +10372,7 @@
    "slow": false,
    "tests": [
     "behavior",
+    "craft",
     "legacy",
     "smoke",
     "workflows"

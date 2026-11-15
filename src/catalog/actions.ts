@@ -725,7 +725,7 @@ export const ACTION_OPS: OpDef[] = [
   op("review.rubric", "production", A, "Subjective review checklist (not auto-scored; record findings with review.note)", {}, {}, {
     run: async () => ({
       data: {
-        note: "These need human or model judgement after looking at previews; objective checks live in check.*.",
+        note: "Judge these by eye after a cold read of the preview (skill://review). Run check.craft first: it measures the tells of generated art (pillow shading, flat ramps, light, banding, confetti, jaggies).",
         items: [
           { aspect: "silhouette", ask: "Does the shape read at 1x? (view.silhouette)" },
           { aspect: "readability", ask: "Are important parts separated by value, not only hue? (view.values)" },

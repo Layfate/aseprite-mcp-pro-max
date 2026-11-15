@@ -1,6 +1,6 @@
 {
   "name": "aseprite-mcp-pro-max",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Unofficial MCP server for creating, editing, validating and exporting pixel art with a locally installed Aseprite.",
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +13,8 @@
     "typecheck": "tsc -p . --noEmit",
     "doctor": "node dist/index.js doctor",
     "docs": "tsx scripts/gen-catalog.ts",
-    "bench": "tsx scripts/bench.ts"
+    "bench": "tsx scripts/bench.ts",
+    "prepare": "tsc -p ."
   },
   "keywords": [
     "mcp",
@@ -46,7 +47,13 @@
     "docs",
     "README.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "rules",
+    "skills",
+    "agents",
+    "hooks",
+    "bin",
+    ".claude-plugin"
   ],
   "engines": {
     "node": ">=20"

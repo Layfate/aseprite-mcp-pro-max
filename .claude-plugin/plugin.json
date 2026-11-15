@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "aseprite-pro-max",
+  "displayName": "Aseprite MCP Pro Max",
+  "version": "2.1.0",
+  "description": "Pixel art through a locally installed Aseprite: 250+ catalogued operations, a craft audit for the tells of generated art (check.craft), a 62-rule pixel-art rulebook with 400 drawable templates, /aseprite-pro-max:* workflow skills and an independent pixel-critic agent.",
+  "license": "MIT",
+  "keywords": ["aseprite", "pixel-art", "sprites", "animation", "gamedev", "mcp"],
+  "mcpServers": {
+    "aseprite": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/bin/plugin-launch.mjs"]
+    }
+  },
+  "hooks": "./hooks/hooks.json"
+}

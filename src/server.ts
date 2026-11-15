@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { loadBackgroundRemover, loadImageProvider } from "./ai.js";
 import { LiveBridge } from "./bridge.js";
@@ -7,6 +7,7 @@ import { ADAPTERS } from "./catalog/actions-engines.js";
 import type { Config } from "./config.js";
 import { Context } from "./context.js";
 import { INSTRUCTIONS, PIXEL_ART_GUIDE, WORKFLOW_GUIDE } from "./guide.js";
+import { getRule, loadRules, loadSkills, ruleText, rulesIndex } from "./kb.js";
 import { PALETTES } from "./palettes.js";
 import { registerCoreTools, registerTool } from "./tools/core.js";
 import { registerLegacyTools } from "./tools/legacy.js";
@@ -74,6 +75,28 @@ export async function createServer(opts: ServerOptions): Promise<{ server: McpSe
     async (uri) => ({ contents: [{ uri: uri.href, mimeType: "application/json", text: JSON.stringify(PALETTES) }] }));
   server.registerResource("catalog", "aseprite://catalog", { title: "Operation catalog", description: "Full machine-readable catalog (large; use search_ops/describe_ops in conversations)", mimeType: "application/json" },
     async (uri) => ({ contents: [{ uri: uri.href, mimeType: "application/json", text: JSON.stringify({ version: VERSION, operations: CATALOG.map((d) => describe(d)), engines: ADAPTERS }) }] }));
+
+  // Craft knowledge: rulebook (rules://) and workflow skills (skill://), also as prompts.
+  server.registerResource("rules-index", "rules://index", { title: "Pixel-art rulebook index", description: "62 craft rules (vendored from aseprite-ai-artist, MIT) + tool-name glossary", mimeType: "text/markdown" },
+    async (uri) => ({ contents: [{ uri: uri.href, mimeType: "text/markdown", text: rulesIndex() }] }));
+  server.registerResource("rule", new ResourceTemplate("rules://{name}", {
+    list: async () => ({ resources: loadRules().map((r) => ({ uri: `rules://${r.name}`, name: r.name, title: r.title, mimeType: "text/markdown" })) }),
+  }), { title: "Pixel-art rule", mimeType: "text/markdown" }, async (uri, vars) => {
+    const r = getRule(String(vars.name));
+    if (!r) throw new Error(`no rule '${vars.name}' (see rules://index)`);
+    return { contents: [{ uri: uri.href, mimeType: "text/markdown", text: ruleText(r) }] };
+  });
+  server.registerResource("skill", new ResourceTemplate("skill://{name}", {
+    list: async () => ({ resources: loadSkills().map((s) => ({ uri: `skill://${s.name}`, name: s.name, title: s.title, description: s.description, mimeType: "text/markdown" })) }),
+  }), { title: "Workflow skill", mimeType: "text/markdown" }, async (uri, vars) => {
+    const s = loadSkills().find((x) => x.name === String(vars.name));
+    if (!s) throw new Error(`no skill '${vars.name}'`);
+    return { contents: [{ uri: uri.href, mimeType: "text/markdown", text: s.body }] };
+  });
+  for (const s of loadSkills()) {
+    server.registerPrompt(s.name, { title: s.title, description: s.description, argsSchema: { request: z.string().optional().describe("What the user asked for") } },
+      (a) => ({ messages: [{ role: "user", content: { type: "text", text: `${s.body}\n\n---\nFollow the workflow above${a.request ? ` for: ${a.request}` : ""}.` } }] }));
+  }
 
   server.registerPrompt("pixel-art-guide", { title: "Pixel art guide", description: "Load pixel-art best practices before drawing" },
     () => ({ messages: [{ role: "user", content: { type: "text", text: PIXEL_ART_GUIDE } }] }));

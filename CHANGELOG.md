@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0 — 2026-11-15
+
+Output quality: make generated pixel art stop reading as generated.
+
+- `check.craft`: an objective audit for the tells plain lint misses. It flags pillow shading (C7), brightness-only ramps (C3), light against the brief or conflicting light (C6), banding (X3), confetti (C5), silhouette jaggies (G6), doubled outlines (E4), mirror symmetry (S4), murky or low-contrast values (V1), colour bloat (C1), near-duplicate colours (C2), partial alpha (E1) and strays. Each finding has a severity, evidence, a location and a fix. The verdict and 0-100 score are deterministic, so two versions of one sprite can be compared. Reference and background layers are excluded. Calibrated so the bundled examples get no blocking findings.
+- `draw.shade`: moves pixels one ramp step darker or lighter with a hue shift (cool shadows, warm lights), using palette colours only.
+- Pixel-art rulebook: 62 rule files with 400 drawable templates, vendored from [with-pebbly/aseprite-ai-artist](https://github.com/with-pebbly/aseprite-ai-artist) (MIT, `rules/LICENSE`). Served as `rules://index` / `rules://<name>` resources and through `kb.rules`, `kb.rule` and `kb.template` (templates as ready `draw.pixel_map` args).
+- Workflow skills (`skills/`): studio, brief, concept, draw, shade, animate, fix and review. Each has hard gates: concept before drawing, a look after every stage, and no "done" without a preview, a clean `check.craft` and an independent review. Fixes are kept only if they win a side-by-side comparison. Served as `skill://<name>` resources and MCP prompts.
+- `agents/pixel-critic.md`: a read-only critic that does a cold read, gives a scored and located critique, and has a blind A/B comparison mode.
+- Claude Code plugin packaging (`.claude-plugin/`, `bin/plugin-launch.mjs` builds on first start, a once-per-session "look at it" hook).
+- Server instructions point models at the studio workflow.
+
 ## 2.0.0 — 2026-11-15
 
 A rebuild around an operation catalog with lazy discovery. v1 tools keep working through the `legacy` profile.

@@ -111,6 +111,16 @@ export const DRAW_OPS: OpDef[] = [
   op("draw.rim_light", "drawing", E, "Light-direction edge highlight and optional far-side shadow",
     { layer, ...frameSel, light: z.enum(["top-left", "top", "top-right", "left", "right", "bottom-left", "bottom", "bottom-right"]).optional(), color: Color.optional(), shadowColor: Color.optional(), depth: int().min(1).max(8).optional(), onlyColors: z.array(Color).max(64).optional() },
     { layer: "body", light: "top-left", color: "#ff77a8", shadowColor: "#7e2553" }, { keywords: ["shading", "lighting direction", "highlight"] }),
+  op("draw.shade", "drawing", E, "Shade or light one ramp step, hue-shifted (cool shadows, warm lights), palette colours only",
+    {
+      layer, ...frameSel, ...optRect, inSelection: z.boolean().optional(),
+      steps: int().min(-3).max(3).optional(), colors: z.array(Color).max(64).optional(), palette: z.array(Color).min(2).max(256).optional(), stepL: int().min(4).max(40).optional(),
+    },
+    { args: { layer: "body", steps: -1, inSelection: true }, setup: [{ op: "sel.rect", x: 16, y: 8, width: 8, height: 16 }] },
+    {
+      keywords: ["shadow", "highlight", "hue shift", "recolor shade", "ramp step", "volume"],
+      notes: "steps < 0 darkens toward blue-violet, > 0 lightens toward warm yellow; only palette colours are used (none suitable -> pixel unchanged and listed). Limit with inSelection, x/y/width/height or colors.",
+    }),
   op("draw.scatter", "drawing", E, "Deterministic (seeded) scatter of colors for texture",
     { layer, ...frameSel, colors: z.array(Color).min(1).max(64), density: z.number().min(0).max(1).optional(), seed: int().min(0).max(2147483647).optional(), onOpaque: z.boolean().optional(), ...optRect, ...drawMods },
     { layer: "bg", colors: ["#29366f"], density: 0.1, seed: 7, onOpaque: true }, { keywords: ["noise", "grass", "texture"] }),
