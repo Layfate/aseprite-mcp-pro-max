@@ -1,0 +1,19 @@
+[project]
+name = "aseprite-mcp-pro-max"
+version = "2.1.0"
+description = "Aseprite MCP Pro Max: an MCP server for high-quality pixel art in Aseprite - critique, auto-shading, pro outlines, perceptual palettes, animation polish and game-ready export"
+readme = "README.md"
+authors = [{ name = "Zense" }]
+license = "MIT"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.6.0,<2",
+    "numpy>=1.26",
+    "pillow>=10.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]

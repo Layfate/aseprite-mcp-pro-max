@@ -1,5 +1,0 @@
-{
-  "runtime.version": "Lua 5.4",
-  "diagnostics.globals": ["app", "json", "Sprite", "Image", "Color", "Point", "Rectangle", "Palette", "ColorMode", "BlendMode", "AniDir", "WebSocket", "WebSocketMessageType", "MessageType", "Timer", "Dialog", "plugin", "Selection", "FlipType", "Size"],
-  "diagnostics.disable": ["unbalanced-assignments"]
-}
