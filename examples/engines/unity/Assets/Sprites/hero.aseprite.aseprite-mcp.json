@@ -1,0 +1,13 @@
+{
+  "generator": "aseprite-mcp-pro-max",
+  "pixelsPerUnit": 32,
+  "filterPoint": true,
+  "importMode": "AnimatedSprite",
+  "generateAnimationClips": true,
+  "generateModelPrefab": true,
+  "pivot": {
+    "x": 0.5,
+    "y": 0.25
+  },
+  "includeHiddenLayers": false
+}

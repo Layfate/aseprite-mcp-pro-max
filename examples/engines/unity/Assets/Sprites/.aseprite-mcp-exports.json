@@ -1,0 +1,23 @@
+{
+ "engine.unity_aseprite:hero.aseprite": {
+  "source": "source/hero.aseprite",
+  "sourceVersion": "0323a6d45131",
+  "options": "ccc0e6f83ce70cde",
+  "outputs": {
+   "hero.aseprite": "0323a6d451318903",
+   "hero.aseprite.aseprite-mcp.json": "8c59b9576a77c870"
+  },
+  "at": "2026-11-15T07:55:37.721Z"
+ },
+ "engine.unity_sheet:hero_sheet.png": {
+  "source": "source/hero.aseprite",
+  "sourceVersion": "0323a6d45131",
+  "options": "46aed2f47209c969",
+  "outputs": {
+   "hero_sheet.png": "e75b5a1e939c1f32",
+   "hero_sheet.json": "52b9f46a4a0466c8",
+   "hero_sheet.unity.json": "f1f2793791e424f4"
+  },
+  "at": "2026-11-15T07:55:38.068Z"
+ }
+}

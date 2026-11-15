@@ -1,0 +1,66 @@
+{
+ "generator": "aseprite-mcp-pro-max",
+ "note": "SpriteFrame names refer to the plist atlas; build AnimationClips with AnimationClip.createWithSpriteFrames or the Animation editor.",
+ "animations": [
+  {
+   "name": "idle_e",
+   "loop": true,
+   "frames": [
+    "hero_0.png",
+    "hero_1.png"
+   ],
+   "durationsMs": [
+    220,
+    220
+   ]
+  },
+  {
+   "name": "walk_e",
+   "loop": true,
+   "frames": [
+    "hero_2.png",
+    "hero_3.png",
+    "hero_4.png",
+    "hero_5.png"
+   ],
+   "durationsMs": [
+    110,
+    110,
+    110,
+    110
+   ]
+  },
+  {
+   "name": "idle_w",
+   "loop": true,
+   "frames": [
+    "hero_6.png",
+    "hero_7.png"
+   ],
+   "durationsMs": [
+    220,
+    220
+   ]
+  },
+  {
+   "name": "walk_w",
+   "loop": true,
+   "frames": [
+    "hero_8.png",
+    "hero_9.png",
+    "hero_10.png",
+    "hero_11.png"
+   ],
+   "durationsMs": [
+    110,
+    110,
+    110,
+    110
+   ]
+  }
+ ],
+ "pivot": {
+  "x": 0.5,
+  "y": 0.25
+ }
+}

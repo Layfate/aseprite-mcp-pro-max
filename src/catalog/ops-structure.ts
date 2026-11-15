@@ -1,0 +1,118 @@
+import { z } from "zod";
+import { Color, blendMode, byte, coord, direction, frameSel, int, layer, layerReq, paging, placement, point, pos, size } from "./common.js";
+import { op, type OpDef } from "./types.js";
+
+const E = "edit" as const;
+const Q = "query" as const;
+
+/** Document, layer, cel, frame, tag and slice operations (Lua-backed). */
+export const STRUCTURE_OPS: OpDef[] = [
+  // ---------------------------------------------------------------- documents
+  op("doc.inspect", "documents", Q, "Document summary: size, mode, layers, frames, tags, slices, palette",
+    { paletteColors: z.boolean().optional(), brief: z.boolean().optional() }, {}),
+  op("doc.resize_canvas", "documents", E, "Resize the canvas without scaling pixels (anchor)",
+    { width: size(), height: size(), anchor: z.enum(["top-left", "top", "top-right", "left", "center", "right", "bottom-left", "bottom", "bottom-right"]).optional() },
+    { width: 40, height: 36, anchor: "bottom" }, { keywords: ["canvas size", "anchor", "pad"] }),
+  op("doc.crop", "documents", E, "Crop the canvas to a rectangle",
+    { x: coord(), y: coord(), width: size(), height: size() }, { x: 4, y: 4, width: 24, height: 24 }),
+  op("doc.trim", "documents", E, "Crop the canvas to the content of all frames (+margin)",
+    { margin: int().min(0).max(256).optional() }, { margin: 1 }, { keywords: ["autocrop", "trim transparent"] }),
+  op("doc.scale", "documents", E, "Scale the whole sprite (nearest by default)",
+    { factor: z.number().positive().max(64).optional(), width: size().optional(), height: size().optional(), method: z.enum(["nearest", "bilinear", "rotsprite"]).optional() },
+    { factor: 2 }, { keywords: ["resize", "upscale"], notes: "method: nearest keeps hard pixels; bilinear/rotsprite are explicit smoothing options." }),
+  op("doc.set_color_mode", "documents", E, "Convert to rgb, gray or indexed",
+    { mode: z.enum(["rgb", "gray", "indexed"]), dithering: z.enum(["none", "ordered", "old"]).optional() }, { mode: "indexed" }),
+  op("doc.set_metadata", "documents", E, "Set sprite user data text and custom key/value properties",
+    { data: z.string().max(10000).optional(), properties: z.record(z.string().max(64), z.union([z.string().max(2000), z.number(), z.boolean()])).optional() },
+    { data: "hero sprite", properties: { author: "team", version: 2 } }),
+  op("doc.get_metadata", "documents", Q, "Read user data, custom properties, pivot, grid and pixel ratio", {}, {}),
+  op("doc.set_grid", "documents", E, "Set the editor grid (also used as default tile size)",
+    { x: coord().optional(), y: coord().optional(), width: size(), height: size() }, { width: 8, height: 8 }),
+  op("doc.set_pixel_ratio", "documents", E, "Set the pixel aspect ratio (e.g. 2:1 wide pixels)",
+    { width: int().min(1).max(8), height: int().min(1).max(8) }, { width: 1, height: 1 }),
+  op("doc.set_transparent_index", "documents", E, "Set the transparent palette index (indexed sprites)",
+    { index: byte() }, { args: { index: 0 }, setup: [{ op: "doc.set_color_mode", mode: "indexed" }] }),
+
+  // ---------------------------------------------------------------- layers
+  op("layer.list", "layers", Q, "Layers top to bottom with type, visibility, cels and user data",
+    { type: z.enum(["image", "group", "tilemap"]).optional(), ...paging }, {}),
+  op("layer.add", "layers", E, "Add an image layer",
+    { name: z.string().min(1).max(256), ...placement, opacity: byte().optional(), blendMode: blendMode.optional(), visible: z.boolean().optional(), allowDuplicate: z.boolean().optional() },
+    { name: "shadow", below: "body", opacity: 128, blendMode: "multiply" }),
+  op("layer.add_group", "layers", E, "Add a layer group (optionally moving layers into it)",
+    { name: z.string().min(1).max(256), ...placement, children: z.array(z.string().max(512)).max(256).optional(), opacity: byte().optional(), visible: z.boolean().optional(), allowDuplicate: z.boolean().optional() },
+    { name: "character", children: ["body", "fx"] }),
+  op("layer.set", "layers", E, "Rename or set visibility, lock, opacity, blend mode, user data/color",
+    { layer: layerReq, name: z.string().min(1).max(256).optional(), visible: z.boolean().optional(), locked: z.boolean().optional(), opacity: byte().optional(), blendMode: blendMode.optional(), data: z.string().max(2000).optional(), color: Color.optional() },
+    { layer: "fx", opacity: 180, blendMode: "screen", locked: false }, { keywords: ["visibility", "lock", "opacity", "blend", "rename"] }),
+  op("layer.delete", "layers", E, "Delete a layer or group", { layer: layerReq }, { layer: "fx" }),
+  op("layer.move", "layers", E, "Reorder a layer or move it into a group", { layer: layerReq, ...placement }, { layer: "fx", toBottom: true }),
+  op("layer.duplicate", "layers", E, "Duplicate a layer with all its cels", { layer: layerReq, name: z.string().max(256).optional() }, { layer: "body", name: "body copy" }),
+  op("layer.merge_down", "layers", E, "Merge a layer into the layer below it", { layer: layerReq }, { layer: "fx" }),
+  op("layer.flatten", "layers", E, "Flatten all layers into one", {}, {}),
+  op("layer.merge_group", "layers", E, "Merge a group's visible layers into one layer that replaces it",
+    { layer: layerReq, name: z.string().max(256).optional() }, { layer: "parts" }),
+  op("layer.solo", "layers", E, "Show only these layers (and their parents/children); hide the rest",
+    { layers: z.array(z.string().max(512)).min(1).max(256) }, { layers: ["body"] }, { keywords: ["isolate", "hide others"] }),
+  op("layer.set_background", "layers", E, "Convert a layer to the opaque background layer or back",
+    { layer: layerReq, background: z.boolean() }, { layer: "bg", background: true }),
+  op("layer.extract_colors", "layers", E, "Move pixels of given colors into a new layer (e.g. split the outline)",
+    { layer: layerReq, name: z.string().min(1).max(256), colors: z.array(Color).min(1).max(256), keep: z.boolean().optional() },
+    { layer: "body", name: "outline", colors: ["#000000"] }),
+
+  // ---------------------------------------------------------------- cels
+  op("cel.list", "layers", Q, "Cels with bounds, opacity, z-index and link info",
+    { layer, ...frameSel, ...paging }, { layer: "body" }),
+  op("cel.copy", "layers", E, "Copy a cel to another frame (range) and/or layer",
+    { fromLayer: z.string().max(512).optional(), layer, fromFrame: pos(), toLayer: z.string().max(512).optional(), toFrame: pos(), toFrameEnd: pos().optional() },
+    { layer: "fx", fromFrame: 1, toFrame: 2, toFrameEnd: 4 }),
+  op("cel.move", "layers", E, "Move cels by dx/dy (position only, no pixel loss)",
+    { layer, ...frameSel, dx: coord().optional(), dy: coord().optional() }, { layer: "body", frame: 2, dx: 1, dy: -1 }),
+  op("cel.set", "layers", E, "Set cel opacity, position, z-index, user data/color",
+    { layer, ...frameSel, opacity: byte().optional(), x: coord().optional(), y: coord().optional(), zIndex: int().min(-999).max(999).optional(), data: z.string().max(2000).optional(), color: Color.optional() },
+    { layer: "body", frame: 1, opacity: 200 }),
+  op("cel.delete", "layers", E, "Delete whole cels in a frame range", { layer, ...frameSel }, { layer: "fx", frame: 1 }),
+  op("cel.link", "layers", E, "Link cels of a frame range to the first one (shared image)",
+    { layer, fromFrame: pos(), toFrame: pos() }, { layer: "arm", fromFrame: 1, toFrame: 4 }, { keywords: ["linked cels"] }),
+  op("cel.unlink", "layers", E, "Give linked cels their own image copies", { layer, ...frameSel }, { args: { layer: "arm" }, setup: [{ op: "cel.link", layer: "arm", fromFrame: 1, toFrame: 4 }] }),
+  op("cel.swap", "layers", E, "Swap the cels of two frames on one layer", { layer, frameA: pos(), frameB: pos() }, { layer: "body", frameA: 1, frameB: 2 }),
+
+  // ---------------------------------------------------------------- frames
+  op("frame.list", "animation", Q, "Frames with duration, tags and cel count", { ...paging }, {}),
+  op("frame.add", "animation", E, "Insert empty frames (or copies of copyFrom)",
+    { count: pos().max(512).optional(), after: int().min(0).max(65535).optional(), copyFrom: pos().optional(), durationMs: pos().optional() },
+    { count: 2, after: 4, durationMs: 120 }),
+  op("frame.duplicate", "animation", E, "Duplicate a frame range (all layers) at a position",
+    { from: pos(), to: pos().optional(), insertAt: pos().optional() }, { from: 1, to: 2 }),
+  op("frame.delete", "animation", E, "Delete a frame or range", { from: pos(), to: pos().optional() }, { from: 4 }),
+  op("frame.move", "animation", E, "Move a frame to another position", { from: pos(), to: pos() }, { from: 4, to: 1 }),
+  op("frame.swap", "animation", E, "Swap two frames", { frameA: pos(), frameB: pos() }, { frameA: 1, frameB: 3 }),
+  op("frame.reverse", "animation", E, "Reverse the order of a frame range", { from: pos(), to: pos() }, { from: 1, to: 4 }),
+  op("frame.set_duration", "animation", E, "Set frame durations (one value, or one per selected frame)",
+    { ...frameSel, durationMs: pos().max(65535).optional(), durations: z.array(pos().max(65535)).max(4096).optional() },
+    { tag: "walk", durations: [80, 120] }, { keywords: ["timing", "fps", "speed"] }),
+  op("frame.scale_timing", "animation", E, "Multiply frame durations (speed an animation up or down)",
+    { ...frameSel, factor: z.number().positive().max(100) }, { tag: "idle", factor: 1.5 }),
+  op("frame.dedupe", "cleanup", E, "Merge identical consecutive frames, adding up durations", {}, { args: {}, setup: [{ op: "frame.add", copyFrom: 1, after: 1 }] }, { keywords: ["duplicate frames"] }),
+
+  // ---------------------------------------------------------------- tags
+  op("tag.list", "animation", Q, "Animation tags with direction, repeats, frame count and total ms", { ...paging }, {}),
+  op("tag.add", "animation", E, "Create an animation tag",
+    { name: z.string().min(1).max(256), from: pos(), to: pos(), direction: direction.optional(), repeats: int().min(0).max(65535).optional(), color: Color.optional() },
+    { name: "all", from: 1, to: 4, direction: "pingpong" }),
+  op("tag.set", "animation", E, "Change a tag's name, range, direction, repeats, color or data",
+    { tag: z.string().min(1).max(256), name: z.string().max(256).optional(), from: pos().optional(), to: pos().optional(), direction: direction.optional(), repeats: int().min(0).max(65535).optional(), color: Color.optional(), data: z.string().max(2000).optional() },
+    { tag: "walk", direction: "pingpong", repeats: 2 }, { keywords: ["playback direction", "loop"] }),
+  op("tag.delete", "animation", E, "Delete a tag", { tag: z.string().min(1).max(256) }, { tag: "idle" }),
+
+  // ---------------------------------------------------------------- slices
+  op("slice.list", "sheets", Q, "Slices with bounds, pivot, 9-patch center and data", { ...paging }, {}),
+  op("slice.add", "sheets", E, "Add a named slice (hitbox, 9-patch, pivot)",
+    { name: z.string().min(1).max(256), x: coord(), y: coord(), width: size(), height: size(), pivot: point.optional(), center: z.object({ x: coord(), y: coord(), width: size(), height: size() }).strict().optional(), data: z.string().max(2000).optional() },
+    { name: "hurtbox", x: 10, y: 10, width: 12, height: 14, pivot: { x: 6, y: 14 } }),
+  op("slice.set", "sheets", E, "Change a slice's name, bounds, pivot, center or data",
+    { slice: z.string().min(1).max(256), name: z.string().max(256).optional(), x: coord().optional(), y: coord().optional(), width: size().optional(), height: size().optional(), pivot: point.optional(), center: z.object({ x: coord(), y: coord(), width: size(), height: size() }).strict().optional(), data: z.string().max(2000).optional(), color: Color.optional() },
+    { slice: "hitbox", width: 14, data: "solid" }),
+  op("slice.delete", "sheets", E, "Delete a slice", { slice: z.string().min(1).max(256) }, { slice: "hitbox" }),
+];
+

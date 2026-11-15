@@ -1,0 +1,13 @@
+{
+ "engine.love:hero.png": {
+  "source": "source/hero.aseprite",
+  "sourceVersion": "0323a6d45131",
+  "options": "0cb0492a4e2e5ca0",
+  "outputs": {
+   "hero.png": "e75b5a1e939c1f32",
+   "hero.json": "e23ce351d024a45a",
+   "hero.lua": "831498cc6fe4f8a7"
+  },
+  "at": "2026-11-15T07:55:41.497Z"
+ }
+}

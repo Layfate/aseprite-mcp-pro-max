@@ -1,0 +1,6 @@
+node_modules/
+/dist/
+.aseprite-mcp/
+*.log
+tests/.tmp/
+tests/.coverage/

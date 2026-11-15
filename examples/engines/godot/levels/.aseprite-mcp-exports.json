@@ -1,0 +1,15 @@
+{
+ "engine.godot_tilemap_scene:level.png": {
+  "source": "source/level.aseprite",
+  "sourceVersion": "8f5b8c323acf",
+  "options": "c9bfc33ecf02dfa0",
+  "outputs": {
+   "level.png": "d0bf7487204f5a0d",
+   "level.tileset.tres": "5341a0580cdb5595",
+   "level.tscn": "16eefe0d1705b799",
+   "level.tilemap.json": "59ae524a2cde896f",
+   "aseprite_mcp_import_tilemap.gd": "d8d5ee194ed6239d"
+  },
+  "at": "2026-11-15T07:55:37.372Z"
+ }
+}

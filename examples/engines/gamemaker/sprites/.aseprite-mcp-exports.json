@@ -1,0 +1,15 @@
+{
+ "engine.gamemaker:hero.png": {
+  "source": "source/hero.aseprite",
+  "sourceVersion": "0323a6d45131",
+  "options": "57465fdf0b8ca161",
+  "outputs": {
+   "hero_idle_e_strip2.png": "cde25505ae646223",
+   "hero_walk_e_strip4.png": "099dcb1b27a3a6ff",
+   "hero_idle_w_strip2.png": "20f12e7a2e91b65d",
+   "hero_walk_w_strip4.png": "54f0c53509b67bf9",
+   "hero.gamemaker.json": "6d73f608272738fa"
+  },
+  "at": "2026-11-15T07:55:40.248Z"
+ }
+}

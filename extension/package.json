@@ -1,0 +1,12 @@
+{
+  "name": "aseprite-mcp-pro-max",
+  "displayName": "Aseprite MCP Pro Max Bridge",
+  "description": "Connects the running Aseprite editor to the Aseprite MCP Pro Max server (unofficial) so AI assistants can edit the open sprite live.",
+  "version": "1.0.0",
+  "author": { "name": "Aseprite MCP Pro Max contributors" },
+  "license": "MIT",
+  "categories": ["Scripts"],
+  "contributes": {
+    "scripts": [{ "path": "./main.lua" }]
+  }
+}
