@@ -20,14 +20,14 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
 
     - name: Log in to Container Registry
       if: github.event_name != 'pull_request'
-      uses: docker/login-action@v3
+      uses: docker/login-action@v4
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
@@ -35,7 +35,7 @@ jobs:
 
     - name: Extract metadata
       id: meta
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
@@ -47,7 +47,7 @@ jobs:
           type=raw,value=latest,enable={{is_default_branch}}
 
     - name: Build and push Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       with:
         context: .
         push: ${{ github.event_name != 'pull_request' }}
@@ -55,14 +55,20 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        platforms: linux/amd64,linux/arm64
+        # amd64 only: the image installs steamcmd, a 32-bit x86 package, and
+        # Ubuntu's arm64 mirror has no i386 packages, so arm64 cannot build.
+        platforms: linux/amd64
+        # Pull requests don't push, so load the image for the test step.
+        load: ${{ github.event_name == 'pull_request' }}
 
+    # Use the generated tag: it is lowercase, as Docker requires, while
+    # github.repository keeps the owner's capital letter.
     - name: Test Docker image
       if: github.event_name == 'pull_request'
       run: |
-        docker run --rm --entrypoint /bin/bash ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.number }} -c "
+        docker run --rm --entrypoint /bin/bash ${{ fromJSON(steps.meta.outputs.json).tags[0] }} -c "
           echo 'Testing Docker image...' &&
-          python3 --version &&
+          uv run python --version &&
           uv --version &&
           ls -la /app &&
           echo 'Docker image test completed successfully!'
