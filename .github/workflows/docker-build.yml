@@ -68,7 +68,7 @@ jobs:
       run: |
         docker run --rm --entrypoint /bin/bash ${{ fromJSON(steps.meta.outputs.json).tags[0] }} -c "
           echo 'Testing Docker image...' &&
-          python3 --version &&
+          uv run python --version &&
           uv --version &&
           ls -la /app &&
           echo 'Docker image test completed successfully!'
