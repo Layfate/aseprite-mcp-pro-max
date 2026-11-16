@@ -61,10 +61,12 @@ jobs:
         # Pull requests don't push, so load the image for the test step.
         load: ${{ github.event_name == 'pull_request' }}
 
+    # Use the generated tag: it is lowercase, as Docker requires, while
+    # github.repository keeps the owner's capital letter.
     - name: Test Docker image
       if: github.event_name == 'pull_request'
       run: |
-        docker run --rm --entrypoint /bin/bash ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.number }} -c "
+        docker run --rm --entrypoint /bin/bash ${{ fromJSON(steps.meta.outputs.json).tags[0] }} -c "
           echo 'Testing Docker image...' &&
           python3 --version &&
           uv --version &&
